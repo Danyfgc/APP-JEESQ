@@ -5,17 +5,37 @@ import {
     StyleSheet,
     ScrollView,
     Dimensions,
+    TouchableOpacity,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { GlassCard } from '../components/GlassCard';
 import { GlassButton } from '../components/GlassButton';
+import { DailyReadingCard } from '../components/DailyReadingCard';
 import { colors } from '../theme/colors';
 import { globalStyles } from '../theme/styles';
+import { getTodayReading } from '../data/readingCalendar';
+import { HomeStackParamList } from '../navigation/HomeStack';
 
 const { width } = Dimensions.get('window');
 
+type HomeScreenNavigationProp = NativeStackNavigationProp<HomeStackParamList, 'Home'>;
+
 export const HomeScreen = () => {
+    const navigation = useNavigation<HomeScreenNavigationProp>();
+
+    const handleReadingPress = () => {
+        const todayReading = getTodayReading();
+        if (todayReading) {
+            navigation.navigate('Reading', {
+                reading: todayReading.reading,
+                date: new Date().toISOString(),
+            });
+        }
+    };
+
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -56,18 +76,27 @@ export const HomeScreen = () => {
                         </View>
                     </GlassCard>
 
+                    {/* Daily Reading Card */}
+                    <DailyReadingCard onPress={handleReadingPress} />
+
                     {/* Feature Cards Grid */}
                     <View style={styles.grid}>
                         <View style={styles.gridRow}>
-                            <GlassCard style={styles.featureCard}>
-                                <Text style={styles.featureIcon}>📖</Text>
-                                <Text style={[globalStyles.subtitle, styles.featureTitle]}>
-                                    Lecturas
-                                </Text>
-                                <Text style={[globalStyles.bodySmall, styles.featureText]}>
-                                    Reflexiones diarias
-                                </Text>
-                            </GlassCard>
+                            <TouchableOpacity
+                                style={styles.featureCardContainer}
+                                onPress={handleReadingPress}
+                                activeOpacity={0.8}
+                            >
+                                <GlassCard style={styles.featureCard}>
+                                    <Text style={styles.featureIcon}>📖</Text>
+                                    <Text style={[globalStyles.subtitle, styles.featureTitle]}>
+                                        Lecturas
+                                    </Text>
+                                    <Text style={[globalStyles.bodySmall, styles.featureText]}>
+                                        Reflexiones diarias
+                                    </Text>
+                                </GlassCard>
+                            </TouchableOpacity>
 
                             <GlassCard style={styles.featureCard}>
                                 <Text style={styles.featureIcon}>🙏</Text>
@@ -171,9 +200,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginBottom: 15,
     },
-    featureCard: {
+    featureCardContainer: {
         flex: 1,
         marginHorizontal: 5,
+    },
+    featureCard: {
+        flex: 1,
         alignItems: 'center',
         paddingVertical: 25,
     },

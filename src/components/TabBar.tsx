@@ -50,6 +50,8 @@ export const TabBar: React.FC<BottomTabBarProps> = ({
                                     return 'home';
                                 case 'Calendario':
                                     return 'calendar';
+                                case 'Actividades':
+                                    return 'calendar-outline';
                                 case 'Extras':
                                     return 'grid';
                                 default:
