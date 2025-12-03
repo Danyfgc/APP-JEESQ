@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -11,12 +11,15 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
+import { Ionicons } from '@expo/vector-icons';
 import { GlassCard } from '../components/GlassCard';
 import { GlassButton } from '../components/GlassButton';
 import { DailyReadingCard } from '../components/DailyReadingCard';
 import { colors } from '../theme/colors';
 import { globalStyles } from '../theme/styles';
 import { getTodayReading } from '../data/readingCalendar';
+import { getUpcomingActivities, Activity } from '../services/activitiesService';
+import { formatDate } from '../utils/dateUtils';
 import { HomeStackParamList } from '../navigation/HomeStack';
 
 const { width } = Dimensions.get('window');
@@ -25,6 +28,22 @@ type HomeScreenNavigationProp = NativeStackNavigationProp<HomeStackParamList, 'H
 
 export const HomeScreen = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>();
+    const [nextEvent, setNextEvent] = useState<Activity | null>(null);
+
+    useEffect(() => {
+        loadNextEvent();
+    }, []);
+
+    const loadNextEvent = async () => {
+        try {
+            const upcoming = await getUpcomingActivities();
+            if (upcoming.length > 0) {
+                setNextEvent(upcoming[0]); // Primer evento próximo
+            }
+        } catch (error) {
+            console.error('Error loading next event:', error);
+        }
+    };
 
     const handleReadingPress = () => {
         const todayReading = getTodayReading();
@@ -58,23 +77,38 @@ export const HomeScreen = () => {
                         </Text>
                     </View>
 
-                    {/* Hero Card */}
-                    <GlassCard gradient style={styles.heroCard}>
-                        <Text style={[globalStyles.title, styles.heroTitle]}>
-                            ✨ Comunidad de Fe
-                        </Text>
-                        <Text style={[globalStyles.body, styles.heroText]}>
-                            Un espacio para crecer juntos en la fe, compartir experiencias y
-                            fortalecer nuestro camino espiritual.
-                        </Text>
-                        <View style={styles.mt20}>
-                            <GlassButton
-                                title="Explorar"
-                                onPress={() => console.log('Explorar')}
-                                variant="primary"
-                            />
-                        </View>
-                    </GlassCard>
+                    {/* Next Event Card */}
+                    {nextEvent && (
+                        <GlassCard gradient style={styles.heroCard}>
+                            <View style={styles.eventBadge}>
+                                <Ionicons name="calendar" size={16} color="#ffffff" />
+                                <Text style={styles.eventBadgeText}>Próximo Evento</Text>
+                            </View>
+                            <Text style={[globalStyles.title, styles.heroTitle]}>
+                                {nextEvent.title}
+                            </Text>
+                            <View style={styles.eventDetails}>
+                                <View style={styles.eventRow}>
+                                    <Ionicons name="calendar-outline" size={20} color={colors.primary.light} />
+                                    <Text style={[globalStyles.body, styles.eventText]}>
+                                        {formatDate(nextEvent.date)}
+                                    </Text>
+                                </View>
+                                <View style={styles.eventRow}>
+                                    <Ionicons name="time-outline" size={20} color={colors.primary.light} />
+                                    <Text style={[globalStyles.body, styles.eventText]}>
+                                        {nextEvent.time}
+                                    </Text>
+                                </View>
+                                <View style={styles.eventRow}>
+                                    <Ionicons name="location-outline" size={20} color={colors.primary.light} />
+                                    <Text style={[globalStyles.body, styles.eventText]}>
+                                        {nextEvent.location}
+                                    </Text>
+                                </View>
+                            </View>
+                        </GlassCard>
+                    )}
 
                     {/* Daily Reading Card */}
                     <DailyReadingCard onPress={handleReadingPress} />
@@ -132,19 +166,7 @@ export const HomeScreen = () => {
                         </View>
                     </View>
 
-                    {/* Info Card */}
-                    <GlassCard style={styles.infoCard}>
-                        <Text style={[globalStyles.subtitle, styles.infoTitle]}>
-                            Próximo Encuentro
-                        </Text>
-                        <Text style={[globalStyles.body, styles.infoText]}>
-                            Únete a nosotros este domingo para un tiempo de adoración y
-                            comunión.
-                        </Text>
-                        <View style={[globalStyles.row, styles.mt15]}>
-                            <Text style={styles.infoDetail}>📅 Domingo, 10:00 AM</Text>
-                        </View>
-                    </GlassCard>
+
 
                     {/* Bottom Spacing for Tab Bar */}
                     <View style={styles.bottomSpacer} />
@@ -239,6 +261,35 @@ const styles = StyleSheet.create({
     infoDetail: {
         color: 'rgba(255, 255, 255, 0.9)',
         fontSize: 14,
+    },
+    eventBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(139, 92, 246, 0.3)',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 12,
+        alignSelf: 'flex-start',
+        marginBottom: 16,
+    },
+    eventBadgeText: {
+        color: '#ffffff',
+        fontSize: 12,
+        fontWeight: '600',
+        marginLeft: 6,
+    },
+    eventDetails: {
+        marginTop: 20,
+    },
+    eventRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    eventText: {
+        color: '#ffffff',
+        marginLeft: 12,
+        flex: 1,
     },
     bottomSpacer: {
         height: 100,

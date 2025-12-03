@@ -48,10 +48,8 @@ export const TabBar: React.FC<BottomTabBarProps> = ({
                             switch (routeName) {
                                 case 'Inicio':
                                     return 'home';
-                                case 'Calendario':
-                                    return 'calendar';
                                 case 'Actividades':
-                                    return 'calendar-outline';
+                                    return 'calendar';
                                 case 'Extras':
                                     return 'grid';
                                 default:

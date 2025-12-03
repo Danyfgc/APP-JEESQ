@@ -10,6 +10,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
+import { Calendar, DateData } from 'react-native-calendars';
 import { colors } from '../theme/colors';
 import { globalStyles } from '../theme/styles';
 import { fetchActivities, Activity } from '../services/activitiesService';
@@ -19,10 +20,17 @@ export const ActivitiesScreen = () => {
     const [activities, setActivities] = useState<Activity[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(getTodayString());
+    const [markedDates, setMarkedDates] = useState<any>({});
 
     useEffect(() => {
         loadActivities();
     }, []);
+
+    useEffect(() => {
+        // Actualizar marcadores cuando cambien las actividades
+        updateMarkedDates();
+    }, [activities, selectedDate]);
 
     const loadActivities = async () => {
         try {
@@ -38,16 +46,47 @@ export const ActivitiesScreen = () => {
 
     const onRefresh = async () => {
         setRefreshing(true);
-        await fetchActivities(true); // Force refresh
+        await fetchActivities(true);
         await loadActivities();
         setRefreshing(false);
     };
 
-    const isUpcoming = (date: Date) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return date >= today;
+    const updateMarkedDates = () => {
+        const marked: any = {};
+
+        // Marcar días con actividades
+        activities.forEach((activity) => {
+            const dateStr = formatDateToYYYYMMDD(activity.date);
+            marked[dateStr] = {
+                marked: true,
+                dotColor: '#8B5CF6',
+            };
+        });
+
+        // Marcar día seleccionado
+        if (marked[selectedDate]) {
+            marked[selectedDate] = {
+                ...marked[selectedDate],
+                selected: true,
+                selectedColor: 'rgba(139, 92, 246, 0.3)',
+            };
+        } else {
+            marked[selectedDate] = {
+                selected: true,
+                selectedColor: 'rgba(139, 92, 246, 0.3)',
+            };
+        }
+
+        setMarkedDates(marked);
     };
+
+    const onDayPress = (day: DateData) => {
+        setSelectedDate(day.dateString);
+    };
+
+    const selectedActivities = activities.filter(
+        (act) => formatDateToYYYYMMDD(act.date) === selectedDate
+    );
 
     return (
         <View style={styles.container}>
@@ -80,37 +119,52 @@ export const ActivitiesScreen = () => {
                             <ActivityIndicator size="large" color={colors.primary.main} />
                             <Text style={styles.loadingText}>Cargando actividades...</Text>
                         </View>
-                    ) : activities.length === 0 ? (
-                        <View style={styles.emptyContainer}>
-                            <Ionicons name="calendar-outline" size={64} color="rgba(255, 255, 255, 0.3)" />
-                            <Text style={styles.emptyText}>No hay actividades programadas</Text>
-                            <Text style={styles.emptySubtext}>
-                                Desliza hacia abajo para actualizar
-                            </Text>
-                        </View>
                     ) : (
                         <>
-                            {/* Upcoming Activities */}
-                            <View style={styles.section}>
-                                <Text style={styles.sectionTitle}>Próximas Actividades</Text>
-                                {activities
-                                    .filter(act => isUpcoming(act.date))
-                                    .map((activity) => (
-                                        <ActivityCard key={activity.id} activity={activity} upcoming />
-                                    ))}
-                            </View>
+                            {/* Calendar */}
+                            <BlurView intensity={20} tint="dark" style={[styles.calendarCard, globalStyles.shadow]}>
+                                <Calendar
+                                    onDayPress={onDayPress}
+                                    markedDates={markedDates}
+                                    theme={{
+                                        calendarBackground: 'transparent',
+                                        textSectionTitleColor: '#ffffff',
+                                        selectedDayBackgroundColor: '#8B5CF6',
+                                        selectedDayTextColor: '#ffffff',
+                                        todayTextColor: '#8B5CF6',
+                                        dayTextColor: '#ffffff',
+                                        textDisabledColor: 'rgba(255, 255, 255, 0.3)',
+                                        dotColor: '#8B5CF6',
+                                        selectedDotColor: '#ffffff',
+                                        arrowColor: '#8B5CF6',
+                                        monthTextColor: '#ffffff',
+                                        textDayFontWeight: '500',
+                                        textMonthFontWeight: '700',
+                                        textDayHeaderFontWeight: '600',
+                                        textDayFontSize: 14,
+                                        textMonthFontSize: 18,
+                                        textDayHeaderFontSize: 12,
+                                    }}
+                                />
+                            </BlurView>
 
-                            {/* Past Activities */}
-                            {activities.some(act => !isUpcoming(act.date)) && (
-                                <View style={styles.section}>
-                                    <Text style={styles.sectionTitle}>Actividades Pasadas</Text>
-                                    {activities
-                                        .filter(act => !isUpcoming(act.date))
-                                        .map((activity) => (
-                                            <ActivityCard key={activity.id} activity={activity} upcoming={false} />
-                                        ))}
-                                </View>
-                            )}
+                            {/* Selected Date Activities */}
+                            <View style={styles.activitiesSection}>
+                                <Text style={styles.sectionTitle}>
+                                    Actividades del {formatSelectedDate(selectedDate)}
+                                </Text>
+
+                                {selectedActivities.length === 0 ? (
+                                    <BlurView intensity={20} tint="dark" style={[styles.emptyCard, globalStyles.shadow]}>
+                                        <Ionicons name="calendar-outline" size={48} color="rgba(255, 255, 255, 0.3)" />
+                                        <Text style={styles.emptyText}>No hay actividades este día</Text>
+                                    </BlurView>
+                                ) : (
+                                    selectedActivities.map((activity) => (
+                                        <ActivityCard key={activity.id} activity={activity} />
+                                    ))
+                                )}
+                            </View>
                         </>
                     )}
                 </ScrollView>
@@ -120,22 +174,9 @@ export const ActivitiesScreen = () => {
 };
 
 // Activity Card Component
-const ActivityCard = ({ activity, upcoming }: { activity: Activity; upcoming: boolean }) => (
-    <BlurView intensity={20} tint="dark" style={[styles.card, globalStyles.shadow]}>
-        <View style={styles.cardHeader}>
-            <View style={[styles.badge, upcoming ? styles.badgeUpcoming : styles.badgePast]}>
-                <Text style={styles.badgeText}>
-                    {upcoming ? 'Próximamente' : 'Pasado'}
-                </Text>
-            </View>
-        </View>
-
+const ActivityCard = ({ activity }: { activity: Activity }) => (
+    <BlurView intensity={20} tint="dark" style={[styles.activityCard, globalStyles.shadow]}>
         <Text style={styles.cardTitle}>{activity.title}</Text>
-
-        <View style={styles.infoRow}>
-            <Ionicons name="calendar-outline" size={18} color={colors.primary.light} />
-            <Text style={styles.infoText}>{formatDate(activity.date)}</Text>
-        </View>
 
         <View style={styles.infoRow}>
             <Ionicons name="time-outline" size={18} color={colors.primary.light} />
@@ -148,6 +189,25 @@ const ActivityCard = ({ activity, upcoming }: { activity: Activity; upcoming: bo
         </View>
     </BlurView>
 );
+
+// Helper Functions
+function getTodayString(): string {
+    const today = new Date();
+    return formatDateToYYYYMMDD(today);
+}
+
+function formatDateToYYYYMMDD(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function formatSelectedDate(dateStr: string): string {
+    const [year, month, day] = dateStr.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    return formatDate(date).toLowerCase();
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -191,71 +251,56 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginTop: 16,
     },
-    emptyContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 80,
-    },
-    emptyText: {
-        color: '#ffffff',
-        fontSize: 18,
-        fontWeight: '600',
-        marginTop: 20,
-    },
-    emptySubtext: {
-        color: 'rgba(255, 255, 255, 0.5)',
-        fontSize: 14,
-        marginTop: 8,
-    },
-    section: {
-        marginBottom: 30,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: '#ffffff',
-        marginBottom: 16,
-        paddingLeft: 4,
-    },
-    card: {
+    calendarCard: {
         borderRadius: 20,
-        padding: 20,
-        marginBottom: 16,
+        padding: 16,
+        marginBottom: 24,
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.1)',
         overflow: 'hidden',
     },
-    cardHeader: {
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        marginBottom: 12,
+    activitiesSection: {
+        marginBottom: 20,
     },
-    badge: {
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 12,
-    },
-    badgeUpcoming: {
-        backgroundColor: 'rgba(139, 92, 246, 0.3)',
-    },
-    badgePast: {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    },
-    badgeText: {
-        color: '#ffffff',
-        fontSize: 12,
-        fontWeight: '600',
-    },
-    cardTitle: {
-        fontSize: 20,
+    sectionTitle: {
+        fontSize: 16,
         fontWeight: '700',
         color: '#ffffff',
         marginBottom: 16,
+        paddingLeft: 4,
+        textTransform: 'capitalize',
+    },
+    emptyCard: {
+        borderRadius: 20,
+        padding: 40,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        overflow: 'hidden',
+    },
+    emptyText: {
+        color: 'rgba(255, 255, 255, 0.6)',
+        fontSize: 15,
+        marginTop: 12,
+    },
+    activityCard: {
+        borderRadius: 20,
+        padding: 20,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        overflow: 'hidden',
+    },
+    cardTitle: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#ffffff',
+        marginBottom: 12,
     },
     infoRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 8,
     },
     infoText: {
         color: 'rgba(255, 255, 255, 0.8)',
