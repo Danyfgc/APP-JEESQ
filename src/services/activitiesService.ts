@@ -119,8 +119,8 @@ export const fetchActivities = async (forceRefresh: boolean = false): Promise<Ac
 /**
  * Obtiene actividades futuras (desde hoy en adelante)
  */
-export const getUpcomingActivities = async (): Promise<Activity[]> => {
-    const all = await fetchActivities();
+export const getUpcomingActivities = async (forceRefresh: boolean = false): Promise<Activity[]> => {
+    const all = await fetchActivities(forceRefresh);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 

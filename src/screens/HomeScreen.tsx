@@ -6,6 +6,7 @@ import {
     ScrollView,
     Dimensions,
     TouchableOpacity,
+    RefreshControl,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -22,6 +23,7 @@ import { getUpcomingActivities, Activity } from '../services/activitiesService';
 import { formatDate } from '../utils/dateUtils';
 import { HomeStackParamList } from '../navigation/HomeStack';
 import { useTheme } from '../theme/ThemeContext';
+import { getTodaysCelebrations, Celebration } from '../services/celebrationService';
 
 const { width } = Dimensions.get('window');
 
@@ -31,20 +33,31 @@ export const HomeScreen = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>();
     const [nextEvent, setNextEvent] = useState<Activity | null>(null);
     const { theme, isDarkMode } = useTheme();
+    const [celebrations, setCelebrations] = useState<Celebration[]>([]);
+    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         loadNextEvent();
     }, []);
 
-    const loadNextEvent = async () => {
+    const loadNextEvent = async (forceRefresh = false) => {
         try {
-            const upcoming = await getUpcomingActivities();
+            const upcoming = await getUpcomingActivities(forceRefresh);
             if (upcoming.length > 0) {
                 setNextEvent(upcoming[0]); // Primer evento próximo
             }
+
+            const todaysCelebrations = await getTodaysCelebrations(forceRefresh);
+            setCelebrations(todaysCelebrations);
         } catch (error) {
-            console.error('Error loading next event:', error);
+            console.error('Error loading data:', error);
         }
+    };
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await loadNextEvent(true);
+        setRefreshing(false);
     };
 
     const handleReadingPress = () => {
@@ -63,11 +76,19 @@ export const HomeScreen = () => {
                 colors={isDarkMode ? ['#0f0f1e', '#1a1a2e', '#2d1b4e'] : ['#f5f7fa', '#ffffff', '#e0e0e0']}
                 style={styles.gradient}
             >
-                <StatusBar style="light" />
+                <StatusBar style={isDarkMode ? "light" : "dark"} />
                 <ScrollView
                     style={styles.scrollView}
                     contentContainerStyle={styles.contentContainer}
                     showsVerticalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            tintColor={theme.text.primary}
+                            colors={[theme.primary.main]} // Android
+                        />
+                    }
                 >
                     {/* Header Section */}
                     <View style={styles.header}>
@@ -78,6 +99,47 @@ export const HomeScreen = () => {
                             Bienvenido a nuestra comunidad
                         </Text>
                     </View>
+
+                    {/* Celebration Banner */}
+                    {celebrations.length > 0 && (
+                        <View style={{ marginBottom: 20 }}>
+                            {celebrations.map((celebration) => (
+                                <GlassCard key={celebration.id} style={{
+                                    marginBottom: 10,
+                                    backgroundColor: isDarkMode ? 'rgba(255, 215, 0, 0.15)' : 'rgba(255, 215, 0, 0.3)',
+                                    borderColor: 'rgba(255, 215, 0, 0.5)'
+                                }}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Text style={{ fontSize: 32, marginRight: 15 }}>
+                                            {celebration.category.toLowerCase().includes('aniversario') ? '💍' : '🎂'}
+                                        </Text>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={[globalStyles.subtitle, {
+                                                color: theme.text.primary,
+                                                fontWeight: 'bold',
+                                                fontSize: 18
+                                            }]}>
+                                                ¡Feliz {celebration.category}!
+                                            </Text>
+                                            <Text style={[globalStyles.body, {
+                                                color: theme.text.primary,
+                                                fontSize: 16,
+                                                marginVertical: 4
+                                            }]}>
+                                                {celebration.name}
+                                            </Text>
+                                            <Text style={[globalStyles.caption, {
+                                                color: theme.text.secondary,
+                                                fontStyle: 'italic'
+                                            }]}>
+                                                Dios los bendiga abundantemente
+                                            </Text>
+                                        </View>
+                                    </View>
+                                </GlassCard>
+                            ))}
+                        </View>
+                    )}
 
                     {/* Next Event Card */}
                     {nextEvent && (
