@@ -13,8 +13,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const systemColorScheme = useColorScheme();
-    const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark');
+    const [isDarkMode, setIsDarkMode] = useState(true);
 
     // Update theme if system theme changes, but only if user hasn't manually set it? 
     // For now, let's just initialize with system preference and let user toggle.
