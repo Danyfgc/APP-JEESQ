@@ -132,22 +132,28 @@ export const HomeScreen = () => {
                         </View>
 
                         <View style={styles.gridRow}>
-                            <GlassCard style={styles.featureCard}>
-                                <Text style={styles.featureIcon}>👥</Text>
-                                <Text style={[globalStyles.subtitle, styles.featureTitle]}>
-                                    Comunidad
-                                </Text>
-                                <Text style={[globalStyles.bodySmall, styles.featureText]}>
-                                    Conecta con otros
-                                </Text>
-                            </GlassCard>
+                            <TouchableOpacity
+                                style={{ flex: 1 }}
+                                onPress={() => navigation.navigate('Community')}
+                                activeOpacity={0.7}
+                            >
+                                <GlassCard style={styles.featureCard}>
+                                    <Text style={styles.featureIcon}>👥</Text>
+                                    <Text style={[globalStyles.subtitle, styles.featureTitle, { color: theme.text.primary }]}>
+                                        Comunidad
+                                    </Text>
+                                    <Text style={[globalStyles.bodySmall, styles.featureText, { color: theme.text.secondary }]}>
+                                        Conecta con otros
+                                    </Text>
+                                </GlassCard>
+                            </TouchableOpacity>
 
                             <GlassCard style={styles.featureCard}>
                                 <Text style={styles.featureIcon}>🎵</Text>
-                                <Text style={[globalStyles.subtitle, styles.featureTitle]}>
+                                <Text style={[globalStyles.subtitle, styles.featureTitle, { color: theme.text.primary }]}>
                                     Alabanza
                                 </Text>
-                                <Text style={[globalStyles.bodySmall, styles.featureText]}>
+                                <Text style={[globalStyles.bodySmall, styles.featureText, { color: theme.text.secondary }]}>
                                     Música y adoración
                                 </Text>
                             </GlassCard>

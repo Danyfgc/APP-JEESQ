@@ -3,12 +3,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '../screens/HomeScreen';
 import { ReadingScreen } from '../screens/ReadingScreen';
 
+import { CommunityScreen } from '../screens/CommunityScreen';
+
 export type HomeStackParamList = {
     Home: undefined;
-    Reading: {
-        reading: string;
-        date?: string;
-    };
+    Reading: { reading: any; date: string };
+    Community: undefined;
 };
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
@@ -24,6 +24,7 @@ export const HomeStack = () => {
         >
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Reading" component={ReadingScreen} />
+            <Stack.Screen name="Community" component={CommunityScreen} />
         </Stack.Navigator>
     );
 };
