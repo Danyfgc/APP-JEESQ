@@ -7,7 +7,7 @@ export const colors = {
     dark: '#5b3a8f',  // Morado oscuro
     gradient: ['#667eea', '#764ba2', '#f093fb'], // Gradiente principal
   },
-  
+
   // Colores secundarios
   secondary: {
     light: '#f093fb',
@@ -15,7 +15,7 @@ export const colors = {
     dark: '#a855f7',
     gradient: ['#f093fb', '#f5576c'],
   },
-  
+
   // Fondos oscuros
   dark: {
     background: '#0f0f1e',      // Fondo principal oscuro
@@ -23,15 +23,15 @@ export const colors = {
     elevated: '#252540',         // Superficie elevada
     glass: 'rgba(26, 26, 46, 0.7)', // Vidrio oscuro
   },
-  
+
   // Fondos claros
   light: {
-    background: '#f5f7fa',       // Fondo principal claro
+    background: '#f8f9fa',       // Fondo principal claro (más suave)
     surface: '#ffffff',          // Superficie clara
-    elevated: '#f0f2f5',         // Superficie elevada
-    glass: 'rgba(255, 255, 255, 0.7)', // Vidrio claro
+    elevated: '#f1f3f5',         // Superficie elevada
+    glass: 'rgba(255, 255, 255, 0.8)', // Vidrio claro (más opaco para mejor lectura)
   },
-  
+
   // Efectos de vidrio (glassmorphism)
   glass: {
     dark: {
@@ -40,12 +40,12 @@ export const colors = {
       shadow: 'rgba(0, 0, 0, 0.3)',
     },
     light: {
-      background: 'rgba(255, 255, 255, 0.6)',
-      border: 'rgba(255, 255, 255, 0.8)',
-      shadow: 'rgba(0, 0, 0, 0.1)',
+      background: 'rgba(255, 255, 255, 0.75)', // Más opaco
+      border: 'rgba(255, 255, 255, 0.6)',
+      shadow: 'rgba(0, 0, 0, 0.05)', // Sombra más suave
     },
   },
-  
+
   // Colores de texto
   text: {
     dark: {
@@ -54,12 +54,12 @@ export const colors = {
       tertiary: 'rgba(255, 255, 255, 0.5)',
     },
     light: {
-      primary: '#1a1a2e',
-      secondary: 'rgba(26, 26, 46, 0.7)',
-      tertiary: 'rgba(26, 26, 46, 0.5)',
+      primary: '#2d3748', // Gris oscuro suave en lugar de negro azulado
+      secondary: '#4a5568', // Gris medio
+      tertiary: '#718096', // Gris claro
     },
   },
-  
+
   // Colores de acento
   accent: {
     success: '#10b981',

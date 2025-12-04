@@ -10,15 +10,17 @@ import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 import { globalStyles } from '../theme/styles';
+import { useTheme } from '../theme/ThemeContext';
 
 export const TabBar: React.FC<BottomTabBarProps> = ({
     state,
     descriptors,
     navigation,
 }) => {
+    const { theme, isDarkMode } = useTheme();
     return (
         <View style={styles.container}>
-            <BlurView intensity={40} style={styles.blurContainer}>
+            <BlurView intensity={40} tint={isDarkMode ? 'dark' : 'light'} style={styles.blurContainer}>
                 <View style={styles.tabBar}>
                     {state.routes.map((route, index) => {
                         const { options } = descriptors[route.key];
@@ -64,6 +66,8 @@ export const TabBar: React.FC<BottomTabBarProps> = ({
                                 iconName={getIconName(route.name)}
                                 isFocused={isFocused}
                                 onPress={onPress}
+                                theme={theme}
+                                isDarkMode={isDarkMode}
                             />
                         );
                     })}
@@ -78,6 +82,8 @@ interface TabButtonProps {
     iconName: keyof typeof Ionicons.glyphMap;
     isFocused: boolean;
     onPress: () => void;
+    theme: any;
+    isDarkMode: boolean;
 }
 
 const TabButton: React.FC<TabButtonProps> = ({
@@ -85,9 +91,11 @@ const TabButton: React.FC<TabButtonProps> = ({
     iconName,
     isFocused,
     onPress,
+    theme,
+    isDarkMode,
 }) => {
-    const iconColor = isFocused ? '#ffffff' : 'rgba(255, 255, 255, 0.5)';
-    const textColor = isFocused ? '#ffffff' : 'rgba(255, 255, 255, 0.5)';
+    const iconColor = isFocused ? theme.primary.main : (isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)');
+    const textColor = isFocused ? theme.primary.main : (isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)');
 
     return (
         <TouchableOpacity

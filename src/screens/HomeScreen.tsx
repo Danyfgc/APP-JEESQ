@@ -21,6 +21,7 @@ import { getTodayReading } from '../data/readingCalendar';
 import { getUpcomingActivities, Activity } from '../services/activitiesService';
 import { formatDate } from '../utils/dateUtils';
 import { HomeStackParamList } from '../navigation/HomeStack';
+import { useTheme } from '../theme/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -29,6 +30,7 @@ type HomeScreenNavigationProp = NativeStackNavigationProp<HomeStackParamList, 'H
 export const HomeScreen = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>();
     const [nextEvent, setNextEvent] = useState<Activity | null>(null);
+    const { theme, isDarkMode } = useTheme();
 
     useEffect(() => {
         loadNextEvent();
@@ -58,7 +60,7 @@ export const HomeScreen = () => {
     return (
         <View style={styles.container}>
             <LinearGradient
-                colors={['#0f0f1e', '#1a1a2e', '#2d1b4e']}
+                colors={isDarkMode ? ['#0f0f1e', '#1a1a2e', '#2d1b4e'] : ['#f5f7fa', '#ffffff', '#e0e0e0']}
                 style={styles.gradient}
             >
                 <StatusBar style="light" />
@@ -69,10 +71,10 @@ export const HomeScreen = () => {
                 >
                     {/* Header Section */}
                     <View style={styles.header}>
-                        <Text style={[globalStyles.titleLarge, styles.title]}>
+                        <Text style={[globalStyles.titleLarge, styles.title, { color: theme.text.primary }]}>
                             Jesús es el Señor
                         </Text>
-                        <Text style={[globalStyles.body, styles.subtitle]}>
+                        <Text style={[globalStyles.body, styles.subtitle, { color: theme.text.secondary }]}>
                             Bienvenido a nuestra comunidad
                         </Text>
                     </View>
@@ -84,7 +86,7 @@ export const HomeScreen = () => {
                                 <Ionicons name="calendar" size={16} color="#ffffff" />
                                 <Text style={styles.eventBadgeText}>Próximo Evento</Text>
                             </View>
-                            <Text style={[globalStyles.title, styles.heroTitle]}>
+                            <Text style={[globalStyles.title, styles.heroTitle, { color: theme.text.primary }]}>
                                 {nextEvent.title}
                             </Text>
                             <View style={styles.eventDetails}>
@@ -101,8 +103,8 @@ export const HomeScreen = () => {
                                     </Text>
                                 </View>
                                 <View style={styles.eventRow}>
-                                    <Ionicons name="location-outline" size={20} color={colors.primary.light} />
-                                    <Text style={[globalStyles.body, styles.eventText]}>
+                                    <Ionicons name="location-outline" size={20} color={theme.primary.light} />
+                                    <Text style={[globalStyles.body, styles.eventText, { color: theme.text.primary }]}>
                                         {nextEvent.location}
                                     </Text>
                                 </View>
@@ -116,21 +118,7 @@ export const HomeScreen = () => {
                     {/* Feature Cards Grid */}
                     <View style={styles.grid}>
                         <View style={styles.gridRow}>
-                            <TouchableOpacity
-                                style={styles.featureCardContainer}
-                                onPress={handleReadingPress}
-                                activeOpacity={0.8}
-                            >
-                                <GlassCard style={styles.featureCard}>
-                                    <Text style={styles.featureIcon}>📖</Text>
-                                    <Text style={[globalStyles.subtitle, styles.featureTitle]}>
-                                        Lecturas
-                                    </Text>
-                                    <Text style={[globalStyles.bodySmall, styles.featureText]}>
-                                        Reflexiones diarias
-                                    </Text>
-                                </GlassCard>
-                            </TouchableOpacity>
+
 
                             <GlassCard style={styles.featureCard}>
                                 <Text style={styles.featureIcon}>🙏</Text>

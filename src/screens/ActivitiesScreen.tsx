@@ -15,8 +15,10 @@ import { colors } from '../theme/colors';
 import { globalStyles } from '../theme/styles';
 import { fetchActivities, Activity } from '../services/activitiesService';
 import { formatDate } from '../utils/dateUtils';
+import { useTheme } from '../theme/ThemeContext';
 
 export const ActivitiesScreen = () => {
+    const { theme, isDarkMode } = useTheme();
     const [activities, setActivities] = useState<Activity[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -59,7 +61,7 @@ export const ActivitiesScreen = () => {
             const dateStr = formatDateToYYYYMMDD(activity.date);
             marked[dateStr] = {
                 marked: true,
-                dotColor: '#8B5CF6',
+                dotColor: theme.primary.main,
             };
         });
 
@@ -68,12 +70,12 @@ export const ActivitiesScreen = () => {
             marked[selectedDate] = {
                 ...marked[selectedDate],
                 selected: true,
-                selectedColor: 'rgba(139, 92, 246, 0.3)',
+                selectedColor: isDarkMode ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.2)',
             };
         } else {
             marked[selectedDate] = {
                 selected: true,
-                selectedColor: 'rgba(139, 92, 246, 0.3)',
+                selectedColor: isDarkMode ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.2)',
             };
         }
 
@@ -91,13 +93,13 @@ export const ActivitiesScreen = () => {
     return (
         <View style={styles.container}>
             <LinearGradient
-                colors={['#0f0f1e', '#1a1a2e', '#2d1b4e']}
+                colors={isDarkMode ? ['#0f0f1e', '#1a1a2e', '#2d1b4e'] : ['#f5f7fa', '#ffffff', '#e0e0e0']}
                 style={styles.gradient}
             >
                 {/* Header */}
-                <BlurView intensity={20} style={styles.header}>
-                    <Ionicons name="calendar" size={28} color="#ffffff" />
-                    <Text style={styles.headerTitle}>Actividades</Text>
+                <BlurView intensity={20} tint={isDarkMode ? 'dark' : 'light'} style={styles.header}>
+                    <Ionicons name="calendar" size={28} color={theme.text.primary} />
+                    <Text style={[styles.headerTitle, { color: theme.text.primary }]}>Actividades</Text>
                     <View style={styles.placeholder} />
                 </BlurView>
 
@@ -122,22 +124,22 @@ export const ActivitiesScreen = () => {
                     ) : (
                         <>
                             {/* Calendar */}
-                            <BlurView intensity={20} tint="dark" style={[styles.calendarCard, globalStyles.shadow]}>
+                            <BlurView intensity={20} tint={isDarkMode ? 'dark' : 'light'} style={[styles.calendarCard, globalStyles.shadow]}>
                                 <Calendar
                                     onDayPress={onDayPress}
                                     markedDates={markedDates}
                                     theme={{
                                         calendarBackground: 'transparent',
-                                        textSectionTitleColor: '#ffffff',
-                                        selectedDayBackgroundColor: '#8B5CF6',
+                                        textSectionTitleColor: theme.text.primary,
+                                        selectedDayBackgroundColor: theme.primary.main,
                                         selectedDayTextColor: '#ffffff',
-                                        todayTextColor: '#8B5CF6',
-                                        dayTextColor: '#ffffff',
-                                        textDisabledColor: 'rgba(255, 255, 255, 0.3)',
-                                        dotColor: '#8B5CF6',
+                                        todayTextColor: theme.primary.main,
+                                        dayTextColor: theme.text.primary,
+                                        textDisabledColor: theme.text.tertiary,
+                                        dotColor: theme.primary.main,
                                         selectedDotColor: '#ffffff',
-                                        arrowColor: '#8B5CF6',
-                                        monthTextColor: '#ffffff',
+                                        arrowColor: theme.primary.main,
+                                        monthTextColor: theme.text.primary,
                                         textDayFontWeight: '500',
                                         textMonthFontWeight: '700',
                                         textDayHeaderFontWeight: '600',
@@ -150,18 +152,18 @@ export const ActivitiesScreen = () => {
 
                             {/* Selected Date Activities */}
                             <View style={styles.activitiesSection}>
-                                <Text style={styles.sectionTitle}>
+                                <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>
                                     Actividades del {formatSelectedDate(selectedDate)}
                                 </Text>
 
                                 {selectedActivities.length === 0 ? (
-                                    <BlurView intensity={20} tint="dark" style={[styles.emptyCard, globalStyles.shadow]}>
-                                        <Ionicons name="calendar-outline" size={48} color="rgba(255, 255, 255, 0.3)" />
-                                        <Text style={styles.emptyText}>No hay actividades este día</Text>
+                                    <BlurView intensity={20} tint={isDarkMode ? 'dark' : 'light'} style={[styles.emptyCard, globalStyles.shadow]}>
+                                        <Ionicons name="calendar-outline" size={48} color={theme.text.tertiary} />
+                                        <Text style={[styles.emptyText, { color: theme.text.secondary }]}>No hay actividades este día</Text>
                                     </BlurView>
                                 ) : (
                                     selectedActivities.map((activity) => (
-                                        <ActivityCard key={activity.id} activity={activity} />
+                                        <ActivityCard key={activity.id} activity={activity} theme={theme} isDarkMode={isDarkMode} />
                                     ))
                                 )}
                             </View>
@@ -174,18 +176,18 @@ export const ActivitiesScreen = () => {
 };
 
 // Activity Card Component
-const ActivityCard = ({ activity }: { activity: Activity }) => (
-    <BlurView intensity={20} tint="dark" style={[styles.activityCard, globalStyles.shadow]}>
-        <Text style={styles.cardTitle}>{activity.title}</Text>
+const ActivityCard = ({ activity, theme, isDarkMode }: { activity: Activity; theme: any; isDarkMode: boolean }) => (
+    <BlurView intensity={20} tint={isDarkMode ? 'dark' : 'light'} style={[styles.activityCard, globalStyles.shadow]}>
+        <Text style={[styles.cardTitle, { color: theme.text.primary }]}>{activity.title}</Text>
 
         <View style={styles.infoRow}>
-            <Ionicons name="time-outline" size={18} color={colors.primary.light} />
-            <Text style={styles.infoText}>{activity.time}</Text>
+            <Ionicons name="time-outline" size={18} color={theme.primary.light} />
+            <Text style={[styles.infoText, { color: theme.text.secondary }]}>{activity.time}</Text>
         </View>
 
         <View style={styles.infoRow}>
-            <Ionicons name="location-outline" size={18} color={colors.primary.light} />
-            <Text style={styles.infoText}>{activity.location}</Text>
+            <Ionicons name="location-outline" size={18} color={theme.primary.light} />
+            <Text style={[styles.infoText, { color: theme.text.secondary }]}>{activity.location}</Text>
         </View>
     </BlurView>
 );

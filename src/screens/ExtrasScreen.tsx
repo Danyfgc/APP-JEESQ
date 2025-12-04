@@ -13,6 +13,7 @@ import { GlassCard } from '../components/GlassCard';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 import { globalStyles } from '../theme/styles';
+import { useTheme } from '../theme/ThemeContext';
 
 interface MenuItem {
     id: string;
@@ -24,16 +25,9 @@ interface MenuItem {
 
 export const ExtrasScreen = () => {
     const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
-    const [darkModeEnabled, setDarkModeEnabled] = React.useState(true);
+    const { theme, isDarkMode, toggleTheme } = useTheme();
 
     const menuItems: MenuItem[] = [
-        {
-            id: '1',
-            title: 'Mi Perfil',
-            icon: 'person-outline',
-            type: 'navigation',
-            action: () => console.log('Perfil'),
-        },
         {
             id: '2',
             title: 'Recursos',
@@ -48,13 +42,6 @@ export const ExtrasScreen = () => {
             type: 'navigation',
             action: () => console.log('Donaciones'),
         },
-        {
-            id: '4',
-            title: 'Configuración',
-            icon: 'settings-outline',
-            type: 'navigation',
-            action: () => console.log('Configuración'),
-        },
     ];
 
     const communityStats = [
@@ -66,7 +53,7 @@ export const ExtrasScreen = () => {
     return (
         <View style={styles.container}>
             <LinearGradient
-                colors={['#2d1b4e', '#1a1a2e', '#0f0f1e']}
+                colors={isDarkMode ? ['#2d1b4e', '#1a1a2e', '#0f0f1e'] : ['#f5f7fa', '#ffffff', '#e0e0e0']}
                 style={styles.gradient}
             >
                 <StatusBar style="light" />
@@ -77,48 +64,22 @@ export const ExtrasScreen = () => {
                 >
                     {/* Header */}
                     <View style={styles.header}>
-                        <Text style={[globalStyles.titleLarge, styles.title]}>
+                        <Text style={[globalStyles.titleLarge, styles.title, { color: theme.text.primary }]}>
                             Extras
                         </Text>
-                        <Text style={[globalStyles.body, styles.subtitle]}>
+                        <Text style={[globalStyles.body, styles.subtitle, { color: theme.text.secondary }]}>
                             Configuración y más opciones
                         </Text>
                     </View>
-
-                    {/* Community Stats */}
-                    <GlassCard gradient style={styles.statsCard}>
-                        <Text style={[globalStyles.title, styles.statsTitle]}>
-                            Nuestra Comunidad
-                        </Text>
-                        <View style={styles.statsGrid}>
-                            {communityStats.map((stat, index) => (
-                                <View key={index} style={styles.statItem}>
-                                    <Text style={styles.statIcon}>{stat.icon}</Text>
-                                    <Text style={[globalStyles.title, styles.statValue]}>
-                                        {stat.value}
-                                    </Text>
-                                    <Text style={[globalStyles.bodySmall, styles.statLabel]}>
-                                        {stat.label}
-                                    </Text>
-                                </View>
-                            ))}
-                        </View>
-                    </GlassCard>
-
-                    {/* Settings Section */}
-                    <Text style={[globalStyles.title, styles.sectionTitle]}>
-                        Ajustes
-                    </Text>
-
                     <GlassCard style={styles.settingsCard}>
                         <View style={styles.settingRow}>
                             <View style={styles.settingLeft}>
                                 <Ionicons
                                     name="notifications-outline"
                                     size={24}
-                                    color="rgba(255, 255, 255, 0.9)"
+                                    color={theme.text.primary}
                                 />
-                                <Text style={[globalStyles.body, styles.settingText]}>
+                                <Text style={[globalStyles.body, styles.settingText, { color: theme.text.primary }]}>
                                     Notificaciones
                                 </Text>
                             </View>
@@ -140,15 +101,15 @@ export const ExtrasScreen = () => {
                                 <Ionicons
                                     name="moon-outline"
                                     size={24}
-                                    color="rgba(255, 255, 255, 0.9)"
+                                    color={theme.text.primary}
                                 />
-                                <Text style={[globalStyles.body, styles.settingText]}>
+                                <Text style={[globalStyles.body, styles.settingText, { color: theme.text.primary }]}>
                                     Modo Oscuro
                                 </Text>
                             </View>
                             <Switch
-                                value={darkModeEnabled}
-                                onValueChange={setDarkModeEnabled}
+                                value={isDarkMode}
+                                onValueChange={toggleTheme}
                                 trackColor={{
                                     false: 'rgba(255, 255, 255, 0.2)',
                                     true: colors.primary.main,
@@ -159,7 +120,7 @@ export const ExtrasScreen = () => {
                     </GlassCard>
 
                     {/* Menu Items */}
-                    <Text style={[globalStyles.title, styles.sectionTitle]}>
+                    <Text style={[globalStyles.title, styles.sectionTitle, { color: theme.text.primary }]}>
                         Más Opciones
                     </Text>
 
@@ -176,17 +137,17 @@ export const ExtrasScreen = () => {
                                             <Ionicons
                                                 name={item.icon}
                                                 size={22}
-                                                color="rgba(255, 255, 255, 0.9)"
+                                                color={theme.text.primary}
                                             />
                                         </View>
-                                        <Text style={[globalStyles.body, styles.menuText]}>
+                                        <Text style={[globalStyles.body, styles.menuText, { color: theme.text.primary }]}>
                                             {item.title}
                                         </Text>
                                     </View>
                                     <Ionicons
                                         name="chevron-forward"
                                         size={20}
-                                        color="rgba(255, 255, 255, 0.5)"
+                                        color={theme.text.tertiary}
                                     />
                                 </View>
                             </GlassCard>
@@ -195,13 +156,13 @@ export const ExtrasScreen = () => {
 
                     {/* About Section */}
                     <GlassCard style={styles.aboutCard}>
-                        <Text style={[globalStyles.subtitle, styles.aboutTitle]}>
+                        <Text style={[globalStyles.subtitle, styles.aboutTitle, { color: theme.text.primary }]}>
                             Acerca de
                         </Text>
-                        <Text style={[globalStyles.bodySmall, styles.aboutText]}>
+                        <Text style={[globalStyles.bodySmall, styles.aboutText, { color: theme.text.secondary }]}>
                             Jesús es el Señor - Comunidad de Fe
                         </Text>
-                        <Text style={[globalStyles.caption, styles.versionText]}>
+                        <Text style={[globalStyles.caption, styles.versionText, { color: theme.text.tertiary }]}>
                             Versión 1.0.0
                         </Text>
                     </GlassCard>
