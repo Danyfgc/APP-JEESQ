@@ -7,8 +7,6 @@ import {
     RefreshControl,
     ActivityIndicator,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar, DateData } from 'react-native-calendars';
 import { colors } from '../theme/colors';
@@ -16,6 +14,7 @@ import { globalStyles } from '../theme/styles';
 import { fetchActivities, Activity } from '../services/activitiesService';
 import { formatDate } from '../utils/dateUtils';
 import { useTheme } from '../theme/ThemeContext';
+import { StatusBar } from 'expo-status-bar';
 
 export const ActivitiesScreen = () => {
     const { theme, isDarkMode } = useTheme();
@@ -61,7 +60,7 @@ export const ActivitiesScreen = () => {
             const dateStr = formatDateToYYYYMMDD(activity.date);
             marked[dateStr] = {
                 marked: true,
-                dotColor: theme.primary.main,
+                dotColor: theme.secondary.main, // Naranja
             };
         });
 
@@ -70,12 +69,14 @@ export const ActivitiesScreen = () => {
             marked[selectedDate] = {
                 ...marked[selectedDate],
                 selected: true,
-                selectedColor: isDarkMode ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.2)',
+                selectedColor: theme.secondary.main, // Naranja
+                selectedTextColor: '#ffffff',
             };
         } else {
             marked[selectedDate] = {
                 selected: true,
-                selectedColor: isDarkMode ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.2)',
+                selectedColor: theme.secondary.main, // Naranja
+                selectedTextColor: '#ffffff',
             };
         }
 
@@ -91,105 +92,121 @@ export const ActivitiesScreen = () => {
     );
 
     return (
-        <View style={styles.container}>
-            <LinearGradient
-                colors={isDarkMode ? ['#0f0f1e', '#1a1a2e', '#2d1b4e'] : ['#f5f7fa', '#ffffff', '#e0e0e0']}
-                style={styles.gradient}
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
+            <StatusBar style="light" />
+
+            {/* Geometric Background Shapes */}
+            <View style={[globalStyles.circleShape, {
+                top: -50,
+                left: -50,
+                width: 200,
+                height: 200,
+                backgroundColor: theme.secondary.main, // Naranja
+                opacity: 0.15,
+            }]} />
+            <View style={[globalStyles.circleShape, {
+                top: 100,
+                right: -80,
+                width: 300,
+                height: 300,
+                backgroundColor: theme.primary.light, // Azul claro
+                opacity: 0.1,
+            }]} />
+
+            {/* Header */}
+            <View style={styles.header}>
+                <Ionicons name="calendar" size={28} color={theme.text.primary} />
+                <Text style={[styles.headerTitle, { color: theme.text.primary }]}>Actividades</Text>
+                <View style={styles.placeholder} />
+            </View>
+
+            {/* Content */}
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.content}
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={theme.text.primary}
+                        colors={[theme.secondary.main]}
+                    />
+                }
             >
-                {/* Header */}
-                <BlurView intensity={20} tint={isDarkMode ? 'dark' : 'light'} style={styles.header}>
-                    <Ionicons name="calendar" size={28} color={theme.text.primary} />
-                    <Text style={[styles.headerTitle, { color: theme.text.primary }]}>Actividades</Text>
-                    <View style={styles.placeholder} />
-                </BlurView>
-
-                {/* Content */}
-                <ScrollView
-                    style={styles.scrollView}
-                    contentContainerStyle={styles.content}
-                    showsVerticalScrollIndicator={false}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                            tintColor={colors.primary.main}
-                        />
-                    }
-                >
-                    {loading ? (
-                        <View style={styles.loadingContainer}>
-                            <ActivityIndicator size="large" color={colors.primary.main} />
-                            <Text style={styles.loadingText}>Cargando actividades...</Text>
+                {loading ? (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color={theme.secondary.main} />
+                        <Text style={[styles.loadingText, { color: theme.text.secondary }]}>Cargando actividades...</Text>
+                    </View>
+                ) : (
+                    <>
+                        {/* Calendar */}
+                        <View style={[globalStyles.glassCard, styles.calendarCard]}>
+                            <Calendar
+                                onDayPress={onDayPress}
+                                markedDates={markedDates}
+                                theme={{
+                                    calendarBackground: 'transparent',
+                                    textSectionTitleColor: theme.text.secondary,
+                                    selectedDayBackgroundColor: theme.secondary.main,
+                                    selectedDayTextColor: '#ffffff',
+                                    todayTextColor: theme.secondary.main,
+                                    dayTextColor: theme.text.primary,
+                                    textDisabledColor: theme.text.tertiary,
+                                    dotColor: theme.secondary.main,
+                                    selectedDotColor: '#ffffff',
+                                    arrowColor: theme.secondary.main,
+                                    monthTextColor: theme.text.primary,
+                                    textDayFontWeight: '500',
+                                    textMonthFontWeight: '700',
+                                    textDayHeaderFontWeight: '600',
+                                    textDayFontSize: 14,
+                                    textMonthFontSize: 18,
+                                    textDayHeaderFontSize: 12,
+                                }}
+                            />
                         </View>
-                    ) : (
-                        <>
-                            {/* Calendar */}
-                            <BlurView intensity={20} tint={isDarkMode ? 'dark' : 'light'} style={[styles.calendarCard, globalStyles.shadow]}>
-                                <Calendar
-                                    onDayPress={onDayPress}
-                                    markedDates={markedDates}
-                                    theme={{
-                                        calendarBackground: 'transparent',
-                                        textSectionTitleColor: theme.text.primary,
-                                        selectedDayBackgroundColor: theme.primary.main,
-                                        selectedDayTextColor: '#ffffff',
-                                        todayTextColor: theme.primary.main,
-                                        dayTextColor: theme.text.primary,
-                                        textDisabledColor: theme.text.tertiary,
-                                        dotColor: theme.primary.main,
-                                        selectedDotColor: '#ffffff',
-                                        arrowColor: theme.primary.main,
-                                        monthTextColor: theme.text.primary,
-                                        textDayFontWeight: '500',
-                                        textMonthFontWeight: '700',
-                                        textDayHeaderFontWeight: '600',
-                                        textDayFontSize: 14,
-                                        textMonthFontSize: 18,
-                                        textDayHeaderFontSize: 12,
-                                    }}
-                                />
-                            </BlurView>
 
-                            {/* Selected Date Activities */}
-                            <View style={styles.activitiesSection}>
-                                <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>
-                                    Actividades del {formatSelectedDate(selectedDate)}
-                                </Text>
+                        {/* Selected Date Activities */}
+                        <View style={styles.activitiesSection}>
+                            <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>
+                                Actividades del {formatSelectedDate(selectedDate)}
+                            </Text>
 
-                                {selectedActivities.length === 0 ? (
-                                    <BlurView intensity={20} tint={isDarkMode ? 'dark' : 'light'} style={[styles.emptyCard, globalStyles.shadow]}>
-                                        <Ionicons name="calendar-outline" size={48} color={theme.text.tertiary} />
-                                        <Text style={[styles.emptyText, { color: theme.text.secondary }]}>No hay actividades este día</Text>
-                                    </BlurView>
-                                ) : (
-                                    selectedActivities.map((activity) => (
-                                        <ActivityCard key={activity.id} activity={activity} theme={theme} isDarkMode={isDarkMode} />
-                                    ))
-                                )}
-                            </View>
-                        </>
-                    )}
-                </ScrollView>
-            </LinearGradient>
+                            {selectedActivities.length === 0 ? (
+                                <View style={[globalStyles.glassCard, styles.emptyCard]}>
+                                    <Ionicons name="calendar-outline" size={48} color={theme.text.tertiary} />
+                                    <Text style={[styles.emptyText, { color: theme.text.secondary }]}>No hay actividades este día</Text>
+                                </View>
+                            ) : (
+                                selectedActivities.map((activity) => (
+                                    <ActivityCard key={activity.id} activity={activity} theme={theme} isDarkMode={isDarkMode} />
+                                ))
+                            )}
+                        </View>
+                    </>
+                )}
+            </ScrollView>
         </View>
     );
 };
 
 // Activity Card Component
 const ActivityCard = ({ activity, theme, isDarkMode }: { activity: Activity; theme: any; isDarkMode: boolean }) => (
-    <BlurView intensity={20} tint={isDarkMode ? 'dark' : 'light'} style={[styles.activityCard, globalStyles.shadow]}>
+    <View style={[globalStyles.glassCard, styles.activityCard]}>
         <Text style={[styles.cardTitle, { color: theme.text.primary }]}>{activity.title}</Text>
 
         <View style={styles.infoRow}>
-            <Ionicons name="time-outline" size={18} color={theme.primary.light} />
+            <Ionicons name="time-outline" size={18} color={theme.secondary.main} />
             <Text style={[styles.infoText, { color: theme.text.secondary }]}>{activity.time}</Text>
         </View>
 
         <View style={styles.infoRow}>
-            <Ionicons name="location-outline" size={18} color={theme.primary.light} />
+            <Ionicons name="location-outline" size={18} color={theme.secondary.main} />
             <Text style={[styles.infoText, { color: theme.text.secondary }]}>{activity.location}</Text>
         </View>
-    </BlurView>
+    </View>
 );
 
 // Helper Functions
@@ -214,10 +231,6 @@ function formatSelectedDate(dateStr: string): string {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000',
-    },
-    gradient: {
-        flex: 1,
     },
     header: {
         flexDirection: 'row',
@@ -226,13 +239,11 @@ const styles = StyleSheet.create({
         paddingTop: 60,
         paddingBottom: 20,
         paddingHorizontal: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: 'rgba(255, 255, 255, 0.1)',
     },
     headerTitle: {
-        fontSize: 22,
-        fontWeight: '700',
-        color: '#ffffff',
+        fontSize: 28,
+        fontWeight: '800',
+        letterSpacing: -0.5,
     },
     placeholder: {
         width: 28,
@@ -249,54 +260,37 @@ const styles = StyleSheet.create({
         paddingVertical: 60,
     },
     loadingText: {
-        color: 'rgba(255, 255, 255, 0.7)',
         fontSize: 16,
         marginTop: 16,
     },
     calendarCard: {
-        borderRadius: 20,
-        padding: 16,
         marginBottom: 24,
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.1)',
-        overflow: 'hidden',
+        padding: 10, // Ajuste para el calendario
     },
     activitiesSection: {
         marginBottom: 20,
     },
     sectionTitle: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '700',
-        color: '#ffffff',
         marginBottom: 16,
         paddingLeft: 4,
         textTransform: 'capitalize',
     },
     emptyCard: {
-        borderRadius: 20,
         padding: 40,
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.1)',
-        overflow: 'hidden',
     },
     emptyText: {
-        color: 'rgba(255, 255, 255, 0.6)',
         fontSize: 15,
         marginTop: 12,
     },
     activityCard: {
-        borderRadius: 20,
-        padding: 20,
         marginBottom: 12,
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.1)',
-        overflow: 'hidden',
     },
     cardTitle: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: '700',
-        color: '#ffffff',
         marginBottom: 12,
     },
     infoRow: {
@@ -305,7 +299,6 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     infoText: {
-        color: 'rgba(255, 255, 255, 0.8)',
         fontSize: 15,
         marginLeft: 12,
     },

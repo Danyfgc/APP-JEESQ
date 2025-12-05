@@ -71,164 +71,186 @@ export const HomeScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <LinearGradient
-                colors={isDarkMode ? ['#0f0f1e', '#1a1a2e', '#2d1b4e'] : ['#f5f7fa', '#ffffff', '#e0e0e0']}
-                style={styles.gradient}
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
+            <StatusBar style="light" />
+
+            {/* Geometric Background Shapes */}
+            <View style={[globalStyles.circleShape, {
+                top: -100,
+                right: -50,
+                width: 300,
+                height: 300,
+                backgroundColor: theme.secondary.main, // Naranja
+                opacity: 0.2,
+            }]} />
+            <View style={[globalStyles.circleShape, {
+                top: 100,
+                left: -100,
+                width: 200,
+                height: 200,
+                backgroundColor: theme.primary.light, // Azul claro
+                opacity: 0.1,
+            }]} />
+            <View style={[globalStyles.circleShape, {
+                bottom: -50,
+                right: -50,
+                width: 250,
+                height: 250,
+                backgroundColor: theme.accent.warning, // Amarillo/Naranja
+                opacity: 0.15,
+            }]} />
+
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.contentContainer}
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={theme.text.primary}
+                        colors={[theme.secondary.main]} // Android: Naranja
+                    />
+                }
             >
-                <StatusBar style={isDarkMode ? "light" : "dark"} />
-                <ScrollView
-                    style={styles.scrollView}
-                    contentContainerStyle={styles.contentContainer}
-                    showsVerticalScrollIndicator={false}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                            tintColor={theme.text.primary}
-                            colors={[theme.primary.main]} // Android
-                        />
-                    }
-                >
-                    {/* Header Section */}
-                    <View style={styles.header}>
-                        <Text style={[globalStyles.titleLarge, styles.title, { color: theme.text.primary }]}>
-                            Jesús es el Señor
+                {/* Header Section */}
+                <View style={styles.header}>
+                    <Text style={[globalStyles.titleLarge, styles.title, { color: theme.text.primary }]}>
+                        Jesús es el Señor
+                    </Text>
+                    <Text style={[globalStyles.subtitle, styles.subtitle, { color: theme.text.secondary }]}>
+                        Bienvenido a nuestra comunidad
+                    </Text>
+                </View>
+
+                {/* Celebration Banner */}
+                {celebrations.length > 0 && (
+                    <View style={{ marginBottom: 20 }}>
+                        {celebrations.map((celebration) => (
+                            <GlassCard key={celebration.id} style={{
+                                marginBottom: 10,
+                                backgroundColor: isDarkMode ? 'rgba(255, 215, 0, 0.15)' : 'rgba(255, 215, 0, 0.3)',
+                                borderColor: 'rgba(255, 215, 0, 0.5)'
+                            }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Text style={{ fontSize: 32, marginRight: 15 }}>
+                                        {celebration.category.toLowerCase().includes('aniversario') ? '💍' : '🎂'}
+                                    </Text>
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={[globalStyles.subtitle, {
+                                            color: theme.text.primary,
+                                            fontWeight: 'bold',
+                                            fontSize: 18
+                                        }]}>
+                                            ¡Feliz {celebration.category}!
+                                        </Text>
+                                        <Text style={[globalStyles.body, {
+                                            color: theme.text.primary,
+                                            fontSize: 16,
+                                            marginVertical: 4
+                                        }]}>
+                                            {celebration.name}
+                                        </Text>
+                                        <Text style={[globalStyles.caption, {
+                                            color: theme.text.secondary,
+                                            fontStyle: 'italic'
+                                        }]}>
+                                            Dios los bendiga abundantemente
+                                        </Text>
+                                    </View>
+                                </View>
+                            </GlassCard>
+                        ))}
+                    </View>
+                )}
+
+                {/* Next Event Card */}
+                {nextEvent && (
+                    <GlassCard gradient style={styles.heroCard}>
+                        <View style={styles.eventBadge}>
+                            <Ionicons name="calendar" size={16} color="#ffffff" />
+                            <Text style={styles.eventBadgeText}>Próximo Evento</Text>
+                        </View>
+                        <Text style={[globalStyles.title, styles.heroTitle, { color: theme.text.primary }]}>
+                            {nextEvent.title}
                         </Text>
-                        <Text style={[globalStyles.body, styles.subtitle, { color: theme.text.secondary }]}>
-                            Bienvenido a nuestra comunidad
-                        </Text>
+                        <View style={styles.eventDetails}>
+                            <View style={styles.eventRow}>
+                                <Ionicons name="calendar-outline" size={20} color={colors.primary.light} />
+                                <Text style={[globalStyles.body, styles.eventText]}>
+                                    {formatDate(nextEvent.date)}
+                                </Text>
+                            </View>
+                            <View style={styles.eventRow}>
+                                <Ionicons name="time-outline" size={20} color={colors.primary.light} />
+                                <Text style={[globalStyles.body, styles.eventText]}>
+                                    {nextEvent.time}
+                                </Text>
+                            </View>
+                            <View style={styles.eventRow}>
+                                <Ionicons name="location-outline" size={20} color={theme.primary.light} />
+                                <Text style={[globalStyles.body, styles.eventText, { color: theme.text.primary }]}>
+                                    {nextEvent.location}
+                                </Text>
+                            </View>
+                        </View>
+                    </GlassCard>
+                )}
+
+                {/* Daily Reading Card */}
+                <DailyReadingCard onPress={handleReadingPress} />
+
+                {/* Feature Cards Grid */}
+                <View style={styles.grid}>
+                    <View style={styles.gridRow}>
+
+
+                        <GlassCard style={styles.featureCard}>
+                            <Text style={styles.featureIcon}>🙏</Text>
+                            <Text style={[globalStyles.subtitle, styles.featureTitle]}>
+                                Oración
+                            </Text>
+                            <Text style={[globalStyles.bodySmall, styles.featureText]}>
+                                Momentos de paz
+                            </Text>
+                        </GlassCard>
                     </View>
 
-                    {/* Celebration Banner */}
-                    {celebrations.length > 0 && (
-                        <View style={{ marginBottom: 20 }}>
-                            {celebrations.map((celebration) => (
-                                <GlassCard key={celebration.id} style={{
-                                    marginBottom: 10,
-                                    backgroundColor: isDarkMode ? 'rgba(255, 215, 0, 0.15)' : 'rgba(255, 215, 0, 0.3)',
-                                    borderColor: 'rgba(255, 215, 0, 0.5)'
-                                }}>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <Text style={{ fontSize: 32, marginRight: 15 }}>
-                                            {celebration.category.toLowerCase().includes('aniversario') ? '💍' : '🎂'}
-                                        </Text>
-                                        <View style={{ flex: 1 }}>
-                                            <Text style={[globalStyles.subtitle, {
-                                                color: theme.text.primary,
-                                                fontWeight: 'bold',
-                                                fontSize: 18
-                                            }]}>
-                                                ¡Feliz {celebration.category}!
-                                            </Text>
-                                            <Text style={[globalStyles.body, {
-                                                color: theme.text.primary,
-                                                fontSize: 16,
-                                                marginVertical: 4
-                                            }]}>
-                                                {celebration.name}
-                                            </Text>
-                                            <Text style={[globalStyles.caption, {
-                                                color: theme.text.secondary,
-                                                fontStyle: 'italic'
-                                            }]}>
-                                                Dios los bendiga abundantemente
-                                            </Text>
-                                        </View>
-                                    </View>
-                                </GlassCard>
-                            ))}
-                        </View>
-                    )}
-
-                    {/* Next Event Card */}
-                    {nextEvent && (
-                        <GlassCard gradient style={styles.heroCard}>
-                            <View style={styles.eventBadge}>
-                                <Ionicons name="calendar" size={16} color="#ffffff" />
-                                <Text style={styles.eventBadgeText}>Próximo Evento</Text>
-                            </View>
-                            <Text style={[globalStyles.title, styles.heroTitle, { color: theme.text.primary }]}>
-                                {nextEvent.title}
-                            </Text>
-                            <View style={styles.eventDetails}>
-                                <View style={styles.eventRow}>
-                                    <Ionicons name="calendar-outline" size={20} color={colors.primary.light} />
-                                    <Text style={[globalStyles.body, styles.eventText]}>
-                                        {formatDate(nextEvent.date)}
-                                    </Text>
-                                </View>
-                                <View style={styles.eventRow}>
-                                    <Ionicons name="time-outline" size={20} color={colors.primary.light} />
-                                    <Text style={[globalStyles.body, styles.eventText]}>
-                                        {nextEvent.time}
-                                    </Text>
-                                </View>
-                                <View style={styles.eventRow}>
-                                    <Ionicons name="location-outline" size={20} color={theme.primary.light} />
-                                    <Text style={[globalStyles.body, styles.eventText, { color: theme.text.primary }]}>
-                                        {nextEvent.location}
-                                    </Text>
-                                </View>
-                            </View>
-                        </GlassCard>
-                    )}
-
-                    {/* Daily Reading Card */}
-                    <DailyReadingCard onPress={handleReadingPress} />
-
-                    {/* Feature Cards Grid */}
-                    <View style={styles.grid}>
-                        <View style={styles.gridRow}>
-
-
+                    <View style={styles.gridRow}>
+                        <TouchableOpacity
+                            style={{ flex: 1 }}
+                            onPress={() => navigation.navigate('Community')}
+                            activeOpacity={0.7}
+                        >
                             <GlassCard style={styles.featureCard}>
-                                <Text style={styles.featureIcon}>🙏</Text>
-                                <Text style={[globalStyles.subtitle, styles.featureTitle]}>
-                                    Oración
-                                </Text>
-                                <Text style={[globalStyles.bodySmall, styles.featureText]}>
-                                    Momentos de paz
-                                </Text>
-                            </GlassCard>
-                        </View>
-
-                        <View style={styles.gridRow}>
-                            <TouchableOpacity
-                                style={{ flex: 1 }}
-                                onPress={() => navigation.navigate('Community')}
-                                activeOpacity={0.7}
-                            >
-                                <GlassCard style={styles.featureCard}>
-                                    <Text style={styles.featureIcon}>👥</Text>
-                                    <Text style={[globalStyles.subtitle, styles.featureTitle, { color: theme.text.primary }]}>
-                                        Comunidad
-                                    </Text>
-                                    <Text style={[globalStyles.bodySmall, styles.featureText, { color: theme.text.secondary }]}>
-                                        Conecta con otros
-                                    </Text>
-                                </GlassCard>
-                            </TouchableOpacity>
-
-                            <GlassCard style={styles.featureCard}>
-                                <Text style={styles.featureIcon}>🎵</Text>
+                                <Text style={styles.featureIcon}>👥</Text>
                                 <Text style={[globalStyles.subtitle, styles.featureTitle, { color: theme.text.primary }]}>
-                                    Alabanza
+                                    Comunidad
                                 </Text>
                                 <Text style={[globalStyles.bodySmall, styles.featureText, { color: theme.text.secondary }]}>
-                                    Música y adoración
+                                    Conecta con otros
                                 </Text>
                             </GlassCard>
-                        </View>
+                        </TouchableOpacity>
+
+                        <GlassCard style={styles.featureCard}>
+                            <Text style={styles.featureIcon}>🎵</Text>
+                            <Text style={[globalStyles.subtitle, styles.featureTitle, { color: theme.text.primary }]}>
+                                Alabanza
+                            </Text>
+                            <Text style={[globalStyles.bodySmall, styles.featureText, { color: theme.text.secondary }]}>
+                                Música y adoración
+                            </Text>
+                        </GlassCard>
                     </View>
+                </View>
 
 
 
-                    {/* Bottom Spacing for Tab Bar */}
-                    <View style={styles.bottomSpacer} />
-                </ScrollView>
-            </LinearGradient>
-        </View>
+                {/* Bottom Spacing for Tab Bar */}
+                <View style={styles.bottomSpacer} />
+            </ScrollView>
+        </View >
     );
 };
 

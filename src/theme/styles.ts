@@ -14,30 +14,41 @@ export const globalStyles = StyleSheet.create({
         padding: 20,
     },
 
-    // Efecto de vidrio (glassmorphism)
+    // Efecto de tarjeta moderna (Sólida con sombra suave)
     glassCard: {
-        borderRadius: 20,
-        padding: 20,
-        borderWidth: 1,
+        borderRadius: 24,
+        padding: 24,
+        borderWidth: 0, // Sin borde para look más limpio
         overflow: 'hidden',
+        // Sombra suave por defecto
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+        elevation: 5,
     },
 
-    // Tarjeta de vidrio pequeña
+    // Tarjeta pequeña
     glassCardSmall: {
-        borderRadius: 15,
-        padding: 15,
-        borderWidth: 1,
+        borderRadius: 20,
+        padding: 16,
+        borderWidth: 0,
         overflow: 'hidden',
+        elevation: 3,
     },
 
-    // Botón con efecto glass
+    // Botón moderno
     glassButton: {
-        borderRadius: 15,
+        borderRadius: 16,
         padding: 16,
         alignItems: 'center',
         justifyContent: 'center',
-        borderWidth: 1,
+        borderWidth: 0,
         overflow: 'hidden',
+        elevation: 4,
     },
 
     // Sombras
@@ -47,7 +58,7 @@ export const globalStyles = StyleSheet.create({
             width: 0,
             height: 10,
         },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.2,
         shadowRadius: 20,
         elevation: 10,
     },
@@ -58,32 +69,35 @@ export const globalStyles = StyleSheet.create({
             width: 0,
             height: 4,
         },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.1,
         shadowRadius: 10,
         elevation: 5,
     },
 
     // Texto
     titleLarge: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        letterSpacing: -0.5,
+        fontSize: 36,
+        fontWeight: '800', // Más bold
+        letterSpacing: -1,
+        marginBottom: 8,
     },
 
     title: {
         fontSize: 24,
-        fontWeight: 'bold',
-        letterSpacing: -0.3,
+        fontWeight: '700',
+        letterSpacing: -0.5,
     },
 
     subtitle: {
         fontSize: 18,
         fontWeight: '600',
+        letterSpacing: -0.3,
     },
 
     body: {
         fontSize: 16,
         lineHeight: 24,
+        fontWeight: '400',
     },
 
     bodySmall: {
@@ -94,6 +108,7 @@ export const globalStyles = StyleSheet.create({
     caption: {
         fontSize: 12,
         lineHeight: 16,
+        opacity: 0.8,
     },
 
     // Utilidades de espaciado
@@ -125,6 +140,12 @@ export const globalStyles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+    },
+
+    // Formas geométricas de fondo
+    circleShape: {
+        position: 'absolute',
+        borderRadius: 999,
     },
 });
 

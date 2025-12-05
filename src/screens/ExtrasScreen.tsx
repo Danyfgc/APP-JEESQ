@@ -7,7 +7,6 @@ import {
     TouchableOpacity,
     Switch,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { GlassCard } from '../components/GlassCard';
 import { Ionicons } from '@expo/vector-icons';
@@ -44,142 +43,148 @@ export const ExtrasScreen = () => {
         },
     ];
 
-    const communityStats = [
-        { label: 'Miembros', value: '250+', icon: '👥' },
-        { label: 'Eventos', value: '15', icon: '📅' },
-        { label: 'Recursos', value: '50+', icon: '📚' },
-    ];
-
     return (
-        <View style={styles.container}>
-            <LinearGradient
-                colors={isDarkMode ? ['#2d1b4e', '#1a1a2e', '#0f0f1e'] : ['#f5f7fa', '#ffffff', '#e0e0e0']}
-                style={styles.gradient}
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
+            <StatusBar style="light" />
+
+            {/* Geometric Background Shapes */}
+            <View style={[globalStyles.circleShape, {
+                top: -80,
+                right: -80,
+                width: 250,
+                height: 250,
+                backgroundColor: theme.secondary.main, // Naranja
+                opacity: 0.15,
+            }]} />
+            <View style={[globalStyles.circleShape, {
+                bottom: 100,
+                left: -100,
+                width: 300,
+                height: 300,
+                backgroundColor: theme.primary.light, // Azul claro
+                opacity: 0.1,
+            }]} />
+
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.contentContainer}
+                showsVerticalScrollIndicator={false}
             >
-                <StatusBar style="light" />
-                <ScrollView
-                    style={styles.scrollView}
-                    contentContainerStyle={styles.contentContainer}
-                    showsVerticalScrollIndicator={false}
-                >
-                    {/* Header */}
-                    <View style={styles.header}>
-                        <Text style={[globalStyles.titleLarge, styles.title, { color: theme.text.primary }]}>
-                            Extras
-                        </Text>
-                        <Text style={[globalStyles.body, styles.subtitle, { color: theme.text.secondary }]}>
-                            Configuración y más opciones
-                        </Text>
-                    </View>
-                    <GlassCard style={styles.settingsCard}>
-                        <View style={styles.settingRow}>
-                            <View style={styles.settingLeft}>
-                                <Ionicons
-                                    name="notifications-outline"
-                                    size={24}
-                                    color={theme.text.primary}
-                                />
-                                <Text style={[globalStyles.body, styles.settingText, { color: theme.text.primary }]}>
-                                    Notificaciones
-                                </Text>
-                            </View>
-                            <Switch
-                                value={notificationsEnabled}
-                                onValueChange={setNotificationsEnabled}
-                                trackColor={{
-                                    false: 'rgba(255, 255, 255, 0.2)',
-                                    true: colors.primary.main,
-                                }}
-                                thumbColor={'#ffffff'}
-                            />
-                        </View>
-
-                        <View style={styles.divider} />
-
-                        <View style={styles.settingRow}>
-                            <View style={styles.settingLeft}>
-                                <Ionicons
-                                    name="moon-outline"
-                                    size={24}
-                                    color={theme.text.primary}
-                                />
-                                <Text style={[globalStyles.body, styles.settingText, { color: theme.text.primary }]}>
-                                    Modo Oscuro
-                                </Text>
-                            </View>
-                            <Switch
-                                value={isDarkMode}
-                                onValueChange={toggleTheme}
-                                trackColor={{
-                                    false: 'rgba(255, 255, 255, 0.2)',
-                                    true: colors.primary.main,
-                                }}
-                                thumbColor={'#ffffff'}
-                            />
-                        </View>
-                    </GlassCard>
-
-                    {/* Menu Items */}
-                    <Text style={[globalStyles.title, styles.sectionTitle, { color: theme.text.primary }]}>
-                        Más Opciones
+                {/* Header */}
+                <View style={styles.header}>
+                    <Text style={[globalStyles.titleLarge, styles.title, { color: theme.text.primary }]}>
+                        Extras
                     </Text>
+                    <Text style={[globalStyles.subtitle, styles.subtitle, { color: theme.text.secondary }]}>
+                        Configuración y más opciones
+                    </Text>
+                </View>
 
-                    {menuItems.map((item) => (
-                        <TouchableOpacity
-                            key={item.id}
-                            onPress={item.action}
-                            activeOpacity={0.7}
-                        >
-                            <GlassCard style={styles.menuItem}>
-                                <View style={styles.menuContent}>
-                                    <View style={styles.menuLeft}>
-                                        <View style={styles.iconContainer}>
-                                            <Ionicons
-                                                name={item.icon}
-                                                size={22}
-                                                color={theme.text.primary}
-                                            />
-                                        </View>
-                                        <Text style={[globalStyles.body, styles.menuText, { color: theme.text.primary }]}>
-                                            {item.title}
-                                        </Text>
+                <GlassCard style={styles.settingsCard}>
+                    <View style={styles.settingRow}>
+                        <View style={styles.settingLeft}>
+                            <Ionicons
+                                name="notifications-outline"
+                                size={24}
+                                color={theme.text.primary}
+                            />
+                            <Text style={[globalStyles.body, styles.settingText, { color: theme.text.primary }]}>
+                                Notificaciones
+                            </Text>
+                        </View>
+                        <Switch
+                            value={notificationsEnabled}
+                            onValueChange={setNotificationsEnabled}
+                            trackColor={{
+                                false: 'rgba(255, 255, 255, 0.2)',
+                                true: theme.secondary.main,
+                            }}
+                            thumbColor={'#ffffff'}
+                        />
+                    </View>
+
+                    <View style={styles.divider} />
+
+                    <View style={styles.settingRow}>
+                        <View style={styles.settingLeft}>
+                            <Ionicons
+                                name="moon-outline"
+                                size={24}
+                                color={theme.text.primary}
+                            />
+                            <Text style={[globalStyles.body, styles.settingText, { color: theme.text.primary }]}>
+                                Modo Oscuro
+                            </Text>
+                        </View>
+                        <Switch
+                            value={isDarkMode}
+                            onValueChange={toggleTheme}
+                            trackColor={{
+                                false: 'rgba(255, 255, 255, 0.2)',
+                                true: theme.secondary.main,
+                            }}
+                            thumbColor={'#ffffff'}
+                        />
+                    </View>
+                </GlassCard>
+
+                {/* Menu Items */}
+                <Text style={[globalStyles.title, styles.sectionTitle, { color: theme.text.primary }]}>
+                    Más Opciones
+                </Text>
+
+                {menuItems.map((item) => (
+                    <TouchableOpacity
+                        key={item.id}
+                        onPress={item.action}
+                        activeOpacity={0.7}
+                    >
+                        <GlassCard style={styles.menuItem}>
+                            <View style={styles.menuContent}>
+                                <View style={styles.menuLeft}>
+                                    <View style={[styles.iconContainer, { backgroundColor: theme.primary.light + '30' }]}>
+                                        <Ionicons
+                                            name={item.icon}
+                                            size={22}
+                                            color={theme.text.primary}
+                                        />
                                     </View>
-                                    <Ionicons
-                                        name="chevron-forward"
-                                        size={20}
-                                        color={theme.text.tertiary}
-                                    />
+                                    <Text style={[globalStyles.body, styles.menuText, { color: theme.text.primary }]}>
+                                        {item.title}
+                                    </Text>
                                 </View>
-                            </GlassCard>
-                        </TouchableOpacity>
-                    ))}
+                                <Ionicons
+                                    name="chevron-forward"
+                                    size={20}
+                                    color={theme.text.tertiary}
+                                />
+                            </View>
+                        </GlassCard>
+                    </TouchableOpacity>
+                ))}
 
-                    {/* About Section */}
-                    <GlassCard style={styles.aboutCard}>
-                        <Text style={[globalStyles.subtitle, styles.aboutTitle, { color: theme.text.primary }]}>
-                            Acerca de
-                        </Text>
-                        <Text style={[globalStyles.bodySmall, styles.aboutText, { color: theme.text.secondary }]}>
-                            Jesús es el Señor - Comunidad de Fe
-                        </Text>
-                        <Text style={[globalStyles.caption, styles.versionText, { color: theme.text.tertiary }]}>
-                            Versión 1.0.0
-                        </Text>
-                    </GlassCard>
+                {/* About Section */}
+                <GlassCard style={styles.aboutCard}>
+                    <Text style={[globalStyles.subtitle, styles.aboutTitle, { color: theme.text.primary }]}>
+                        Acerca de
+                    </Text>
+                    <Text style={[globalStyles.bodySmall, styles.aboutText, { color: theme.text.secondary }]}>
+                        Jesús es el Señor - Comunidad de Fe
+                    </Text>
+                    <Text style={[globalStyles.caption, styles.versionText, { color: theme.text.tertiary }]}>
+                        Versión 1.0.0
+                    </Text>
+                </GlassCard>
 
-                    {/* Bottom Spacing */}
-                    <View style={styles.bottomSpacer} />
-                </ScrollView>
-            </LinearGradient>
+                {/* Bottom Spacing */}
+                <View style={styles.bottomSpacer} />
+            </ScrollView>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-    },
-    gradient: {
         flex: 1,
     },
     scrollView: {
@@ -193,41 +198,14 @@ const styles = StyleSheet.create({
         marginBottom: 25,
     },
     title: {
-        color: '#ffffff',
         marginBottom: 8,
     },
     subtitle: {
-        color: 'rgba(255, 255, 255, 0.7)',
-    },
-    statsCard: {
-        marginBottom: 30,
-    },
-    statsTitle: {
-        color: '#ffffff',
-        textAlign: 'center',
-        marginBottom: 20,
-    },
-    statsGrid: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-    },
-    statItem: {
-        alignItems: 'center',
-    },
-    statIcon: {
-        fontSize: 32,
-        marginBottom: 8,
-    },
-    statValue: {
-        color: '#ffffff',
-        marginBottom: 4,
-    },
-    statLabel: {
-        color: 'rgba(255, 255, 255, 0.6)',
+        opacity: 0.8,
     },
     sectionTitle: {
-        color: '#ffffff',
         marginBottom: 15,
+        fontSize: 20,
     },
     settingsCard: {
         marginBottom: 30,
@@ -244,7 +222,8 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     settingText: {
-        color: 'rgba(255, 255, 255, 0.9)',
+        fontSize: 16,
+        fontWeight: '500',
     },
     divider: {
         height: 1,
@@ -253,6 +232,7 @@ const styles = StyleSheet.create({
     },
     menuItem: {
         marginBottom: 12,
+        padding: 16,
     },
     menuContent: {
         flexDirection: 'row',
@@ -262,34 +242,33 @@ const styles = StyleSheet.create({
     menuLeft: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 12,
+        gap: 16,
     },
     iconContainer: {
-        width: 36,
-        height: 36,
-        borderRadius: 10,
-        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+        width: 40,
+        height: 40,
+        borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
     },
     menuText: {
-        color: 'rgba(255, 255, 255, 0.9)',
+        fontSize: 16,
+        fontWeight: '600',
     },
     aboutCard: {
         marginTop: 20,
         marginBottom: 20,
         alignItems: 'center',
+        paddingVertical: 30,
     },
     aboutTitle: {
-        color: '#ffffff',
         marginBottom: 8,
     },
     aboutText: {
-        color: 'rgba(255, 255, 255, 0.7)',
         marginBottom: 4,
     },
     versionText: {
-        color: 'rgba(255, 255, 255, 0.5)',
+        opacity: 0.6,
     },
     bottomSpacer: {
         height: 100,

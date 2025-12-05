@@ -1,69 +1,69 @@
-// Sistema de colores con paleta oscura y clara para glassmorphism
+// Sistema de colores con paleta "Design Studio" (Azul Profundo, Naranja, Amarillo)
 export const colors = {
-  // Colores primarios - Gradientes vibrantes
+  // Colores primarios - Azul Profundo
   primary: {
-    light: '#667eea', // Azul/morado claro
-    main: '#764ba2',  // Morado medio
-    dark: '#5b3a8f',  // Morado oscuro
-    gradient: ['#667eea', '#764ba2', '#f093fb'], // Gradiente principal
+    light: '#7077A1', // Azul lavanda suave
+    main: '#424769',  // Azul medio
+    dark: '#2D3250',  // Azul oscuro profundo (Fondo principal)
+    gradient: ['#2D3250', '#424769', '#7077A1'],
   },
 
-  // Colores secundarios
+  // Colores secundarios - Acentos Vibrantes
   secondary: {
-    light: '#f093fb',
-    main: '#c471ed',
-    dark: '#a855f7',
-    gradient: ['#f093fb', '#f5576c'],
+    light: '#F9E0BB', // Amarillo crema
+    main: '#F6B17A',  // Naranja suave
+    dark: '#FF9843',  // Naranja vibrante
+    gradient: ['#F6B17A', '#FF9843'],
   },
 
-  // Fondos oscuros
+  // Fondos oscuros (Modo por defecto)
   dark: {
-    background: '#0f0f1e',      // Fondo principal oscuro
-    surface: '#1a1a2e',          // Superficie oscura
-    elevated: '#252540',         // Superficie elevada
-    glass: 'rgba(26, 26, 46, 0.7)', // Vidrio oscuro
+    background: '#2D3250',      // Fondo principal (Azul oscuro)
+    surface: '#424769',          // Superficie (Azul medio)
+    elevated: '#7077A1',         // Superficie elevada
+    glass: 'rgba(66, 71, 105, 0.9)', // Casi sólido
   },
 
   // Fondos claros
   light: {
-    background: '#f8f9fa',       // Fondo principal claro (más suave)
-    surface: '#ffffff',          // Superficie clara
-    elevated: '#f1f3f5',         // Superficie elevada
-    glass: 'rgba(255, 255, 255, 0.8)', // Vidrio claro (más opaco para mejor lectura)
+    background: '#F5F5F5',       // Gris muy claro
+    surface: '#FFFFFF',          // Blanco
+    elevated: '#FFFFFF',         // Blanco
+    glass: 'rgba(255, 255, 255, 0.95)', // Sólido
   },
 
-  // Efectos de vidrio (glassmorphism)
+  // Efectos de tarjeta (Modern Card)
   glass: {
     dark: {
-      background: 'rgba(26, 26, 46, 0.6)',
+      background: '#424769', // Sólido para alto contraste
       border: 'rgba(255, 255, 255, 0.1)',
-      shadow: 'rgba(0, 0, 0, 0.3)',
+      shadow: 'rgba(0, 0, 0, 0.4)',
     },
     light: {
-      background: 'rgba(255, 255, 255, 0.75)', // Más opaco
-      border: 'rgba(255, 255, 255, 0.6)',
-      shadow: 'rgba(0, 0, 0, 0.05)', // Sombra más suave
+      background: '#FFFFFF',
+      border: 'rgba(0, 0, 0, 0.05)',
+      shadow: 'rgba(0, 0, 0, 0.1)',
     },
   },
 
   // Colores de texto
   text: {
     dark: {
-      primary: '#ffffff',
-      secondary: 'rgba(255, 255, 255, 0.7)',
-      tertiary: 'rgba(255, 255, 255, 0.5)',
+      primary: '#FFFFFF',
+      secondary: '#F9E0BB', // Amarillo claro para subtítulos
+      tertiary: 'rgba(255, 255, 255, 0.6)',
     },
     light: {
-      primary: '#2d3748', // Gris oscuro suave en lugar de negro azulado
-      secondary: '#4a5568', // Gris medio
-      tertiary: '#718096', // Gris claro
+      primary: '#2D3250', // Azul oscuro
+      secondary: '#424769', // Azul medio
+      tertiary: '#7077A1',
     },
   },
 
   // Colores de acento
   accent: {
     success: '#10b981',
-    warning: '#f59e0b',
+    warning: '#FF9843', // Naranja
     error: '#ef4444',
     info: '#3b82f6',
   },
